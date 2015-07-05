@@ -1,7 +1,7 @@
 %% Configuration file
 
 %% Path to tartarus `platform.pl` file
-path_to_tartarus('../platform.pl').
+path_to_tartarus('platform.pl').
 
 %% Command to open new instance of swi prolog
 %% This should be the format of the Command
