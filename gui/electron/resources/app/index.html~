@@ -1,0 +1,84 @@
+<html>
+<head>
+<script src="fabric.js"></script>
+</head>
+<body>
+
+<!-- initialize canvas -->
+<canvas id="c" width="1000" height="800"></canvas>
+        
+        <script src="libgui.js"></script>
+        <script type="text/javascript">
+        var canvas = new fabric.Canvas('c', {selection: false});
+        // [set grid settings and base port here]
+        var grid = new Grid(canvas, 7000, 3, 3, 70);
+
+// create http server
+        
+  var http = require('http'); 
+  var querystring = require('querystring');
+  
+  function handleRequest(req, res){
+    if(req.method == 'POST') {
+      var body = '';
+      req.on('data', function(chunk) {
+        body += chunk.toString();
+      });
+      req.on('end', function(){
+        res.writeHead(200, 'OK', {'Content-Type': 'text/plain'});
+        console.log(body);
+        console.log(querystring.parse(body));
+        body = querystring.parse(body);
+        // action to be performed
+        // [add/edit actions here]
+        switch(body.action) {
+          case 'create_node':
+            // create node
+            grid.create_node(body.uid, parseInt(body.port));
+            res.end('node created');
+            break;
+          
+          case 'create_link':
+            grid.create_link(body.uid, parseInt(body.dest_port));
+            res.end('link created');
+            break;
+
+          case 'spawn_agent':
+            grid.spawn_agent(body.uid, body.guid, body.color);
+            res.end('agent spawned');
+            break;
+
+          case 'move_agent':
+            grid.move_agent(body.guid, parseInt(body.dest_port), parseInt(body.duration)*1000);
+            res.end('agent move initiated');
+            break;
+
+          case 'kill_agent':
+            grid.kill_agent(body.guid);
+            res.end('agent killed');
+            break;
+
+          case 'set_color':
+            grid.set_color(body.uid, body.color);
+            res.end('color of node set');
+            break; 
+
+          
+          default:
+            res.end('invalid action');
+        }
+      });
+    }
+  }
+
+//Create a server
+var server = http.createServer(handleRequest);
+
+//Lets start our server
+server.listen(8080, function(){
+    //Callback triggered when server is successfully listening. Hurray!
+    console.log("Server listening on: http://localhost:8080");
+});
+  </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<html>
+	<head>
+		<script src="fabric.js"></script>
+	</head>
+	<body>
+		<canvas id="c" width="500" height="500"></canvas>
+		
+		<script type="text/javascript">
+		var canvas = new fabric.Canvas('c');
+
+		// create a rectangle object
+		var rect = new fabric.Rect({
+		  left: 0,
+		  top: 0,
+		  fill: 'white',
+		  stroke: 'black',
+		  width: 20,
+		  height: 20,
+		  originX: 'center',
+		  originY: 'center'
+		});
+		
+		// "add" rectangle onto canvas
+		canvas.add(rect);
+		</script>
+		
+	</body>
+</html>
