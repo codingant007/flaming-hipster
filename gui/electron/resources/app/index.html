@@ -8,10 +8,11 @@
 <canvas id="c" width="1000" height="800"></canvas>
         
         <script src="libgui.js"></script>
+        <script src="../../../../conf.js"></script>
         <script type="text/javascript">
         var canvas = new fabric.Canvas('c', {selection: false});
         // [set grid settings and base port here]
-        var grid = new Grid(canvas, 7000, 10, 10, 70);
+        var grid = new Grid(canvas, conf['base_port'], conf['rows'], conf['cols'], conf['gap']);
 
 // create http server
         
