@@ -3,13 +3,18 @@
 
 distributor_handler(guid,(IP,Port),main):-
 	distribute(guid,F),
+	from(guid,From_IP,From_Port),
+	get(From_IP,From_Port + 1000 ,F),
+	remove_payload(guid,[(from,3)]),
 	distributor_handler(guid,(IP,Port),file(F)).
 
 
 distributor_handler(guid,(IP,Port),file(F)):-
-	(visited -> writeln('already visited'),agent_kill(guid) ;assert(visited), forall(link(Port),distributor_handler(guid,(IP,Port),spawn_to(X)))),
+	serve(Port + 1000),
 	assert(distribute(guid,F)),
-	add_payload(guid,[(distribute,2)]),
+	assert(from(guid,IP,Port)),
+	add_payload(guid,[(distribute,2),(from,3)]),
+	(visited(F) -> writeln('already visited'),agent_kill(guid) ;assert(visited(F)), forall(link(Port),distributor_handler(guid,(IP,Port),spawn_to(X)))),
 	writeln('Distributor agent').
 
 distributor_handler(guid,(IP,Port),spawn_to(X)):-
