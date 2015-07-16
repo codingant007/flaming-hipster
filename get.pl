@@ -13,11 +13,25 @@ user:file_search_path(files, pwd(files)).
 http:location(files, root(files), []).
 
 get :- 
-    http_open('http://localhost:8000/test.zip', In, []),
-    open('test.zip', write, Fd, [type(binary)]),
+    http_open('http://localhost:8000/files/test.txt', In, []),
+    open('files/nik', write, Fd, [type(binary)]),
     copy_stream_data(In, Fd),
     close(In), close(Fd).
 
-serve :- 
-    http_server(http_dispatch, [port(8000)]),
+get(Host,Port,File):- 
+	atom_concat('http://',Host,X1),
+	atom_concat(X1,':',X2),
+	atom_concat(X2,Port,X3),
+	atom_concat(X3,'/files/',X4),
+	atom_concat(X4,File,Y),
+    http_open(Y, In, []),
+    string_concat('files/',File,X),
+    open(X, write, Fd, [type(binary)]),
+    copy_stream_data(In, Fd),
+    close(In), close(Fd).
+
+
+
+serve(Port) :- 
+    http_server(http_dispatch, [port(Port)]),
     http_handler(files(.), serve_files_in_directory(files), [prefix]).
