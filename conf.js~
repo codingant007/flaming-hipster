@@ -1,8 +1,8 @@
 // Configuration file for gui tracker
 
 conf = {
-    'base_port': 4000,
-    'rows': 10,
-    'cols': 10,
+    'base_port': 7000,
+    'rows': 3,
+    'cols': 3,
     'gap': 70
 };

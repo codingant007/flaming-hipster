@@ -8,6 +8,7 @@ getxy(N, Cols, X, Y) :- X is ceiling(N/Cols), Rem is mod(N,Cols), Rem=0, Y is Co
 init(N) :- 
     consult('conf.pl'),
     consult('gui/libgui.pl'),
+    consult('agents/static.pl'),
     path_to_tartarus(Path), consult(Path),
     base_port(Base), Port is Base + N,
     platform_startg(N, localhost, Port),
@@ -16,6 +17,15 @@ init(N) :-
     grid_size(_, Cols),
     getxy(N, Cols, X, Y),
     writeln(X), writeln(Y),
+
+    %% Init static agent
+    base_static_port(BSPort),
+    SPort is BSPort + N,
+    assert(static_agent_port(SPort)),
+    static_agent_name(SName),
+    static_agent_handler(SHandler),
+    create_static_agent(SName, (localhost, SPort), SHandler),
+    agent_execute(SName, (localhost, SPort), SHandler),
     
 
     %% Wait for others to initialize
@@ -32,16 +42,25 @@ init(N) :-
     (L3\=[] ->
         writeln('non empty'),
         select_random(L4,L4)  
-     ; true).    
+     ; true),    
 
 
 
     %% If instructor
+    (instructor(X,Y) -> instructor_init ; true).
+
 
     %% If TA
+
+
+instructor_init :- 
+    %% wait for everything to initialize
+    sleep(80),
+    consult('agents/dfsatt.pl'),
+    init_att.
     
 select_random(L,[]) :- (current_predicate(link/1) -> true ; select_random(L,L)).
 select_random(L, [H|T]) :- random_between(0,1,R), writeln('making selection':R), (R=1 -> create_link(H) ; true), select_random(L,T).
 
 %% predicate to create link
-create_link(I) :- base_port(Base), Port is Base + I, assert(link(Port)), create_linkg(Port).
+create_link(I) :- base_port(Base), Port is Base + I, connect((localhost, Port)).

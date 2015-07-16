@@ -1,11 +1,21 @@
 <html>
 <head>
+<style>
+#counter {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  color: #000000;
+  font-weight: bold;
+}
+</style>
 <script src="fabric.js"></script>
 </head>
 <body>
 
 <!-- initialize canvas -->
 <canvas id="c" width="1000" height="800"></canvas>
+<div id="counter">0</div>
         
         <script src="libgui.js"></script>
         <script src="../../../../conf.js"></script>
@@ -18,6 +28,14 @@
         
   var http = require('http'); 
   var querystring = require('querystring');
+
+  // onmove callback
+  var onmove = function() {
+    var el = document.getElementById('counter');
+    var val = parseInt(el.innerHTML);
+    val += 1;
+    el.innerHTML = val.toString();
+  }
   
   function handleRequest(req, res){
     if(req.method == 'POST') {
@@ -52,6 +70,8 @@
           case 'move_agent':
             grid.move_agent(body.guid, parseInt(body.dest_port), parseInt(body.duration)*1000);
             res.end('agent move initiated');
+            // onmove callback
+            onmove();
             break;
 
           case 'kill_agent':

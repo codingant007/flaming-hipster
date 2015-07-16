@@ -12,7 +12,7 @@ server_url('http://localhost:8080/').
 gui_status(on).
 %% Delay during agent motion
 %% in seconds
-move_delay(2).
+move_delay(0.5).
 
 %% Note: every platform must have a unique `uid`
 

@@ -136,3 +136,11 @@ Grid.prototype.kill_agent = function(guid) {
 
 }
 
+// set node color
+Grid.prototype.set_color = function(uid, color) {
+    if(!this.nodes[uid]) throw 'node does not exist';
+    var node = this.nodes[uid];
+    node.graphic.set('fill', color);
+    this.canvas.renderAll();
+}
+
