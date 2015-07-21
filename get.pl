@@ -25,7 +25,7 @@ get(Host,Port,File):-
 	atom_concat(X3,'/files/',X4),
 	atom_concat(X4,File,Y),
     http_open(Y, In, []),
-    string_concat('files/',File,X),
+    string_concat('files/',okay,X),
     open(X, write, Fd, [type(binary)]),
     copy_stream_data(In, Fd),
     close(In), close(Fd).

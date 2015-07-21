@@ -12,6 +12,13 @@ swipl_command('gnome-terminal --command "swipl -s init.pl -g <command>"').
 %% Base port = 7000 => platforms will be 7001, 7002, ... so on
 base_port(4000).
 
+%% File server base port.
+%% 2000 + platform base_port.
+file_server_base(F_base):-
+	base_port(B),
+	F_base is B + 2000.
+
+
 %% Size of grid (rowsxcolumns)
 grid_size(10,10).
 

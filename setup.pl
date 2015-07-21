@@ -1,6 +1,8 @@
 %% Setup script
 
 setup :- 
+    shell('gnome-terminal --command "./GUI"'),
+    sleep(2),
     consult('conf.pl'),
     grid_size(X,Y),
     Total is X*Y,

@@ -9,10 +9,17 @@ init(N) :-
     consult('conf.pl'),
     consult('gui/libgui.pl'),
     consult('agents/static.pl'),
+    consult('get.pl'),
     path_to_tartarus(Path), consult(Path),
     base_port(Base), Port is Base + N,
     platform_startg(N, localhost, Port),
     set_token(9595),
+
+    %% Serve files on every platform at F_base.
+    file_server_base(F_base),
+    File_server_port is F_base + N,
+    serve(File_server_port),
+
     %% Get X,Y coords
     grid_size(_, Cols),
     getxy(N, Cols, X, Y),
@@ -55,9 +62,13 @@ init(N) :-
 
 instructor_init :- 
     %% wait for everything to initialize
-    sleep(80),
+    sleep(20),
+    %% Initiaze attendance agent.
     consult('agents/dfsatt.pl'),
-    init_att.
+    init_att,
+    %% Initiaze distributor agent.
+    consult('agents/distributor.pl'),
+    init_distributor(nik,'blah').
     
 select_random(L,[]) :- (current_predicate(link/1) -> true ; select_random(L,L)).
 select_random(L, [H|T]) :- random_between(0,1,R), writeln('making selection':R), (R=1 -> create_link(H) ; true), select_random(L,T).

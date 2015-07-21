@@ -48,6 +48,27 @@ agent_createg(Guid, Handler, _) :-
     get_platform_details(IP, Port),
     agent_create(Guid, (IP, Port), Handler).
 
+agent_cloneg(Guid,NewAgent,Color):- gui_status(on),
+    get_platform_details(IP,Port),
+    agent_clone(Guid,(IP,Port),NewAgent),
+    uid(Uid),
+    server_url(Url),
+    http_post(Url, form([action(spawn_agent), uid(Uid), guid(NewAgent), color(Color)]), Rep, []),
+    writeln(Rep),!.
+
+agent_cloneg(Guid,NewAgent,_):-
+    get_platform_details(IP,Port),
+    agent_clone(Guid,(IP,Port),NewAgent).
+
+
+agent_executeg(Guid,Handler):-
+    get_platform_details(IP,Port),
+    agent_execute(Guid,(IP,Port),Handler).
+
+agent_executeg(Guid,Handler,Start_function):-
+    get_platform_details(IP,Port),
+    agent_execute(Guid,(IP,Port),Handler,Start_function).
+
 %% Move agent w/ GUI support
 agent_moveg(Guid, (Host, Port)) :- gui_status(on),
     server_url(Url),
