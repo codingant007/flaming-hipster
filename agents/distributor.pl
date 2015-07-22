@@ -1,7 +1,7 @@
 :- dynamic distributor_handler/3.	%% Handler for distribution.
 :- dynamic distribute_file/2.		%% Payload carrying name of file being distributed.
 :- dynamic agent_from/2.			%% payload carrying IP and Port information of the agent.
-:- dynamic visited/1.				%% Predicate stating the file names that have been sent to a platform.
+:- dynamic visited/2.				%% Predicate stating the file names that have been sent to a platform.
 
 %% Initialize distributor agent.
 %% Done on instructors platfrom.
@@ -13,6 +13,7 @@ init_distributor(X,F):-
 	assert(distribute_file(guid,F)),
 	assert(agent_from(guid,a,b)),
 	add_payload(X,[(distribute_file,2),(agent_from,3)]),
+	assert(visited(nik,F)),
 	agent_execute(nik,(IP,Port),distributor_handler,morph).
 
 
@@ -30,13 +31,12 @@ distributor_handler(guid,(IP,Port),main):-
 	From_IP = IP,
 	From_Port = Port,!.
 
-
-%% If the file agent is carrying  has already arrived on this platform kill commit suicide.
+%% If some agent carrying F has already arrived on this platform kill commit suicide.
 distributor_handler(guid,(IP,Port),main):-
-	forall(visited(X),writeln('handler start visited files :': X)),
+	assert(visited(guid,F)),					%% Mark the file F as visited on this platform.	
 	distribute_file(guid,File),					%% Extract file name from payload.
-	visited(File),
-	forall(visited(X),writeln('visited files :': X)),
+	visited(Someother_agent,File),
+	Someother_agent \= guid,
 	write('File: ':File),writeln(' has already arrived on this platfrom'),
 	agent_killg(guid),!.
 
@@ -46,13 +46,11 @@ distributor_handler(guid,(IP,Port),main):-
 distributor_handler(guid,(IP,Port),main):-
 	write('not visited': F),
 	sleep(2),
-	writeln(cp1),
 	distribute_file(guid,F),						%% Extract file name from payload.
 	agent_from(guid,From_IP,From_Port),				%% Extract Parent platform IP and Port from payload.
 	From_server_port is From_Port + 2000,
 	writeln('File: ' ),
 	get(From_IP,From_server_port ,F),				%% Pull file from the parent platform.
-	assert(visited(F)),								%% Mark the file F as visited on this platform.
 	distributor_handler(guid,(IP,Port),morph).		%% Morph the agent by updating its parent to present platform.
 
 

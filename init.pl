@@ -1,6 +1,7 @@
 %% Initialization of platforms
 
 :- use_module(library(random)).
+:- dynamic visited/2.
 
 getxy(N, Cols, X, Y) :- X is ceiling(N/Cols), Y is mod(N, Cols), Y>0.
 getxy(N, Cols, X, Y) :- X is ceiling(N/Cols), Rem is mod(N,Cols), Rem=0, Y is Cols.
@@ -14,6 +15,7 @@ init(N) :-
     base_port(Base), Port is Base + N,
     platform_startg(N, localhost, Port),
     set_token(9595),
+    assert(visited(dummy,dummy)),
 
     %% Serve files on every platform at F_base.
     file_server_base(F_base),

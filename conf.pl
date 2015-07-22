@@ -10,7 +10,7 @@ swipl_command('gnome-terminal --command "swipl -s init.pl -g <command>"').
 
 %% Base port (base portno to start from)
 %% Base port = 7000 => platforms will be 7001, 7002, ... so on
-base_port(4000).
+base_port(40000).
 
 %% File server base port.
 %% 2000 + platform base_port.
@@ -31,7 +31,7 @@ assistant(null,null).
 
 
 %% Static agent related Configuration
-base_static_port(5000).
+base_static_port(50000).
 %% Peer -> peer location
 %% Dest -> peer static agent location
 static_addr(Peer, Dest) :- Peer=(Host,PPort), base_port(BPort), N is PPort-BPort, base_static_port(BSPort), SPort is BSPort+N, Dest=(Host,SPort).
